@@ -22,18 +22,18 @@ public class UrlConverterService {
     private RedisTemplate<String, Url> redisTemplate;
 
     @Value("${redis.ttl}")
-    private long ttl;
+    private long timeToLive;
 
     public String shortenUrl(String localUrl, String longUrl) {
         LOGGER.info("Shortening {}", longUrl);
         String uniqueID = Hashing.murmur3_32().hashString(longUrl, Charset.defaultCharset()).toString();
-        redisTemplate.opsForValue().set(uniqueID, new Url(longUrl, LocalDateTime.now()), ttl, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(uniqueID, new Url(longUrl, LocalDateTime.now()), timeToLive, TimeUnit.SECONDS);
         String baseString = formatLocalUrlFromShortener(localUrl);
         String shortenedUrl = baseString + uniqueID;
         return shortenedUrl;
     }
 
-    public String getLongUrlFromID(String uniqueID) throws UrlNotFoundException {
+    public String getLongUrlFromId(String uniqueID) throws UrlNotFoundException {
         Url url = redisTemplate.opsForValue().get(uniqueID);
         if (url != null) {
             String longUrl = url.getUrl();

@@ -1,7 +1,6 @@
 package com.example.MyURLShortener.Web;
 
 import com.example.MyURLShortener.Services.UrlConverterService;
-import com.example.MyURLShortener.common.Url;
 import com.example.MyURLShortener.common.UrlNotFoundException;
 import com.example.MyURLShortener.common.UrlValidator;
 import io.github.bucket4j.Bandwidth;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,9 +23,6 @@ import java.time.Duration;
 @RestController
 @RequestMapping(value = "/")
 public class UrlShortenerController {
-
-    @Autowired
-    private RedisTemplate<String, Url> redisTemplate;
 
     @Autowired
     private UrlConverterService urlConverterService;
@@ -63,7 +58,7 @@ public class UrlShortenerController {
     @GetMapping(value = "{id}")
     public RedirectView redirectUrl(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws UrlNotFoundException {
         LOGGER.debug("Received shortened url to redirect: " + id);
-        String redirectUrlString = urlConverterService.getLongUrlFromID(id);
+        String redirectUrlString = urlConverterService.getLongUrlFromId(id);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(redirectUrlString);
         return redirectView;
